@@ -484,6 +484,39 @@ html[data-site=dark] #detail-stride .d-logos img,html[data-site=dark] #detail-cu
 /* Glass nav */
 .bar,.lamp{background:linear-gradient(135deg,rgba(255,255,255,.42),rgba(255,255,255,.12));-webkit-backdrop-filter:blur(22px) saturate(190%);backdrop-filter:blur(22px) saturate(190%);box-shadow:0 8px 30px rgba(26,29,36,.10),inset 0 1px 0 rgba(255,255,255,.85),inset 0 0 0 1px rgba(255,255,255,.5),inset 0 -1px 0 rgba(255,255,255,.2)}
 html[data-site=dark] .bar,html[data-site=dark] .lamp{background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.03));box-shadow:0 8px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.22),inset 0 0 0 1px rgba(255,255,255,.1)}
+
+/* Soft background detail: faint dot grid + colour glows (static, no animation) */
+body::before,body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none}
+body::before{background:radial-gradient(60vmax 50vmax at 88% -8%,rgba(47,75,255,.10),transparent 60%),radial-gradient(55vmax 45vmax at -6% 104%,rgba(255,138,76,.10),transparent 60%)}
+body::after{background-image:radial-gradient(rgba(26,29,36,.16) 1.1px,transparent 1.4px);background-size:28px 28px;-webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 45%,transparent 35%,#000 100%);mask-image:radial-gradient(ellipse 70% 60% at 50% 45%,transparent 35%,#000 100%)}
+html[data-site=dark] body::before{background:radial-gradient(60vmax 50vmax at 88% -8%,rgba(123,147,255,.16),transparent 60%),radial-gradient(55vmax 45vmax at -6% 104%,rgba(255,138,76,.10),transparent 60%)}
+html[data-site=dark] body::after{background-image:radial-gradient(rgba(255,255,255,.16) 1.1px,transparent 1.4px)}
+
+/* Living background: drifting colour orbs + dots that slide with scroll (transform only) */
+html.bgfx body::before,html.bgfx body::after{display:none}
+.bgfx-orbs{position:fixed;inset:0 0 -280px 0;z-index:-1;pointer-events:none;overflow:hidden;will-change:transform}
+.bgfx-orbs i{position:absolute;border-radius:50%;will-change:transform}
+.bgfx-orbs .o1{width:62vmax;height:62vmax;right:-18vmax;top:-26vmax;background:radial-gradient(circle,rgba(47,75,255,.13),transparent 62%);animation:drift1 26s ease-in-out infinite alternate}
+.bgfx-orbs .o2{width:58vmax;height:58vmax;left:-20vmax;bottom:calc(-26vmax + 280px);background:radial-gradient(circle,rgba(255,138,76,.12),transparent 62%);animation:drift2 34s ease-in-out infinite alternate}
+.bgfx-orbs .o3{width:46vmax;height:46vmax;left:30%;top:34%;background:radial-gradient(circle,rgba(147,51,255,.07),transparent 64%);animation:drift3 42s ease-in-out infinite alternate}
+html[data-site=dark] .bgfx-orbs .o1{background:radial-gradient(circle,rgba(123,147,255,0.15) 0,rgba(123,147,255,0.083) 24%,rgba(123,147,255,0.030) 48%,rgba(123,147,255,0.007) 62%,transparent 74%)}
+html[data-site=dark] .bgfx-orbs .o2{background:radial-gradient(circle,rgba(255,138,76,0.07) 0,rgba(255,138,76,0.039) 24%,rgba(255,138,76,0.014) 48%,rgba(255,138,76,0.004) 62%,transparent 74%)}
+html[data-site=dark] .bgfx-orbs .o3{background:radial-gradient(circle,rgba(178,102,255,0.07) 0,rgba(178,102,255,0.039) 24%,rgba(178,102,255,0.014) 48%,rgba(178,102,255,0.004) 62%,transparent 74%)}
+@keyframes drift1{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-9vmax,7vmax,0) scale(1.14)}}
+@keyframes drift2{from{transform:translate3d(0,0,0) scale(1.08)}to{transform:translate3d(10vmax,-8vmax,0) scale(.96)}}
+@keyframes drift3{from{transform:translate3d(-6vmax,-4vmax,0) scale(1)}to{transform:translate3d(7vmax,6vmax,0) scale(1.18)}}
+.bgfx-dots{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;-webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 45%,transparent 35%,#000 100%);mask-image:radial-gradient(ellipse 70% 60% at 50% 45%,transparent 35%,#000 100%)}
+.bgfx-dots i{position:absolute;left:0;right:0;top:-28px;bottom:-28px;background-image:radial-gradient(rgba(26,29,36,.16) 1.1px,transparent 1.4px);background-size:28px 28px;will-change:transform}
+html[data-site=dark] .bgfx-dots i{background-image:radial-gradient(rgba(255,255,255,.16) 1.1px,transparent 1.4px)}
+@media (prefers-reduced-motion:reduce){.bgfx-orbs i{animation:none}}
+@supports (animation-timeline:scroll()){
+html.bgfx-tl .bgfx-orbs{animation:bgOrbScroll linear both;animation-timeline:scroll(root block)}
+html.bgfx-tl .bgfx-dots i{top:0;bottom:-728px;animation:bgDotScroll linear both;animation-timeline:scroll(root block)}
+@keyframes bgOrbScroll{to{transform:translate3d(0,-280px,0)}}
+@keyframes bgDotScroll{to{transform:translate3d(0,-728px,0)}}
+}
+@media (prefers-reduced-motion:reduce){html.bgfx-tl .bgfx-orbs,html.bgfx-tl .bgfx-dots i{animation:none}}
+
 </style>
 </head>
 <body>
@@ -1084,6 +1117,20 @@ var o=ac.createOscillator(),og=ac.createGain();o.type='sine';var f=toDark?170:30
 if(lamp)lamp.addEventListener('click',function(){var toDark=root.getAttribute('data-site')!=='dark';click(toDark);set(toDark?'dark':'light',true)});
 if(pk)[].forEach.call(pk.querySelectorAll('.th-toggle button'),function(b){b.addEventListener('click',function(e){e.stopImmediatePropagation();set(b.getAttribute('data-t'),true)},true)});
 })();
+</script>
+<script>
+(function(){try{
+var d=document,h=d.documentElement,o=d.createElement('div'),t=d.createElement('div');
+o.className='bgfx-orbs';o.setAttribute('aria-hidden','true');o.innerHTML='<i class="o1"></i><i class="o2"></i><i class="o3"></i>';
+t.className='bgfx-dots';t.setAttribute('aria-hidden','true');t.innerHTML='<i></i>';
+d.body.appendChild(o);d.body.appendChild(t);h.classList.add('bgfx');
+var dots=t.firstChild,tick=false,red=matchMedia('(prefers-reduced-motion:reduce)').matches;
+if(window.CSS&&CSS.supports&&CSS.supports('animation-timeline','scroll()')){h.classList.add('bgfx-tl');return}
+function up(){tick=false;var y=window.scrollY||0;
+if(!red){o.style.transform='translate3d(0,'+(-Math.min(y*.05,280)).toFixed(1)+'px,0)';
+dots.style.transform='translate3d(0,'+(-(y*.12%28)).toFixed(1)+'px,0)'}}
+addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(up)}},{passive:true});up();
+}catch(e){}})();
 </script>
 </body>
 </html>
